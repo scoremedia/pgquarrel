@@ -4132,6 +4132,7 @@ quarrelEnumTypes()
 			logDebug("type %s.%s: server2", types2[j].obj.schemaname,
 					 types2[j].obj.objectname);
 
+            getEnumTypesValues(conn2, &types2[j]);
 			if (options.securitylabels)
 				getEnumTypeSecurityLabels(conn2, &types2[j]);
 
@@ -4146,6 +4147,7 @@ quarrelEnumTypes()
 			logDebug("type %s.%s: server1", types1[i].obj.schemaname,
 					 types1[i].obj.objectname);
 
+
 			dumpDropEnumType(fpost, &types1[i]);
 
 			i++;
@@ -4155,6 +4157,9 @@ quarrelEnumTypes()
 		{
 			logDebug("type %s.%s: server1 server2", types1[i].obj.schemaname,
 					 types1[i].obj.objectname);
+
+            getEnumTypesValues(conn1, &types1[i]);
+            getEnumTypesValues(conn2, &types2[j]);
 
 			if (options.securitylabels)
 			{
@@ -4195,6 +4200,13 @@ quarrelEnumTypes()
 	freeEnumTypes(types1, ntypes1);
 	freeEnumTypes(types2, ntypes2);
 }
+
+
+
+
+
+
+
 
 static void
 quarrelRangeTypes()

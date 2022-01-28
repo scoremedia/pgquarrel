@@ -12,6 +12,12 @@
 #include "common.h"
 #include "privileges.h"
 
+typedef struct PQLValue
+{
+    int			attnum;
+    char		*value;
+} PQLValue;
+
 typedef struct PQLBaseType
 {
 	PQLObject	obj;
@@ -73,6 +79,9 @@ typedef struct PQLEnumType
 	char		*owner;
 	char		*acl;
 
+	PQLValue    *values;
+    int			nvalues;
+
 	/* security labels */
 	PQLSecLabel	*seclabels;
 	int			nseclabels;
@@ -99,11 +108,14 @@ typedef struct PQLRangeType
 	int			nseclabels;
 } PQLRangeType;
 
+
+
 PQLBaseType *getBaseTypes(PGconn *c, int *n);
 PQLCompositeType *getCompositeTypes(PGconn *c, int *n);
 PQLEnumType *getEnumTypes(PGconn *c, int *n);
 PQLRangeType *getRangeTypes(PGconn *c, int *n);
 
+void getEnumTypesValues(PGconn *c, PQLEnumType *t);
 void getBaseTypeSecurityLabels(PGconn *c, PQLBaseType *t);
 void getCompositeTypeSecurityLabels(PGconn *c, PQLCompositeType *t);
 void getEnumTypeSecurityLabels(PGconn *c, PQLEnumType *t);

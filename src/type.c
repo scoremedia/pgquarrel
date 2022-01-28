@@ -147,6 +147,46 @@ getBaseTypes(PGconn *c, int *n)
 }
 
 void
+getEnumTypesValues(PGconn *c, PQLEnumType *t)
+{
+	char		*query;
+	PGresult	*res;
+	int			i;
+	char		*kind = NULL;
+
+	query = psprintf(
+			"select n.nspname as enum_schema, t.typname as enum_name, e.enumlabel as enum_value, t.oid as attnum from pg_type t join pg_enum e on t.oid = e.enumtypid join pg_catalog.pg_namespace n ON n.oid = t.typnamespace where n.nspname = %s and t.typname = %s",
+			t->obj.schemaname,t->obj.objectname);
+
+	res = PQexec(c, query);
+	pfree(query);
+
+	if (PQresultStatus(res) != PGRES_TUPLES_OK)
+	{
+		logError("query failed: %s", PQresultErrorMessage(res));
+		PQclear(res);
+		PQfinish(c);
+		/* XXX leak another connection? */
+		exit(EXIT_FAILURE);
+	}
+
+	t->nvalues = PQntuples(res);
+	if (t->nvalues > 0)
+		t->values = (PQLValue *) malloc(t->nvalues * sizeof(PQLValue));
+	else
+		t->values = NULL;
+
+	for (i = 0; i < t->nvalues; i++) {
+		t->values[i].value = strtoul(PQgetvalue(res, i, PQfnumber(res, "attnum")),
+										  NULL, 10);
+		t->values[i].value = strdup(PQgetvalue(res, i, PQfnumber(res,
+																	   "enum_value")));
+	}
+
+	PQclear(res);
+}
+
+void
 getBaseTypeSecurityLabels(PGconn *c, PQLBaseType *t)
 {
 	char		*query;
@@ -1226,6 +1266,21 @@ dumpCreateEnumType(FILE *output, PQLEnumType *t)
 	free(typname);
 }
 
+static void
+dumpAddColumn(FILE *output, PQLEnumType *t, int i) {
+	char	*schema = formatObjectIdentifier(t->obj.schemaname);
+	char	*typename = formatObjectIdentifier(t->obj.objectname);
+
+
+
+	fprintf(output, "\n\n");
+	fprintf(output, "ALTER TYPE ONLY %s.%s ADD VALUE '%s'", schema, typename,
+		 	t->values[i].value);
+
+	free(schema);
+	free(typename);
+}
+
 void
 dumpCreateRangeType(FILE *output, PQLRangeType *t)
 {
@@ -1669,6 +1724,8 @@ dumpAlterEnumType(FILE *output, PQLEnumType *a, PQLEnumType *b)
 	char	*schema2 = formatObjectIdentifier(b->obj.schemaname);
 	char	*typname2 = formatObjectIdentifier(b->obj.objectname);
 
+	int		i, j;
+
 	/* comment */
 	if (options.comment)
 	{
@@ -1684,6 +1741,18 @@ dumpAlterEnumType(FILE *output, PQLEnumType *a, PQLEnumType *b)
 		{
 			fprintf(output, "\n\n");
 			fprintf(output, "COMMENT ON TYPE %s.%s IS NULL;", schema2, typname2);
+		}
+	}
+
+	i = j = 0;
+	while (i < a->nvalues || j < b->nvalues)
+	{
+		if (i == a->nvalues) {
+			logDebug("Type \"%s\".\"%s\" value \"%s\" added",
+					 b->obj.schemaname, b->obj.objectname,
+					 b->values[j].value);
+			dumpAddColumn(output, b, j);
+			j++;
 		}
 	}
 
