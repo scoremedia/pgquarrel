@@ -155,7 +155,7 @@ getEnumTypesValues(PGconn *c, PQLEnumType *t)
 	char		*kind = NULL;
 
 	query = psprintf(
-			"select n.nspname as enum_schema, t.typname as enum_name, e.enumlabel as enum_value, t.oid as attnum from pg_type t join pg_enum e on t.oid = e.enumtypid join pg_catalog.pg_namespace n ON n.oid = t.typnamespace where n.nspname = %s and t.typname = %s",
+			"select n.nspname as enum_schema, t.typname as enum_name, e.enumlabel as enum_value, t.oid as attnum from pg_type t join pg_enum e on t.oid = e.enumtypid join pg_catalog.pg_namespace n ON n.oid = t.typnamespace where n.nspname = '%s' and t.typname = '%s'",
 			t->obj.schemaname,t->obj.objectname);
 
 	res = PQexec(c, query);
