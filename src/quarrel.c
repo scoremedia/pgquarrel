@@ -175,9 +175,9 @@ static void quarrelTransforms();
 static void quarrelTriggers();
 static void quarrelBaseTypes();
 static void quarrelCompositeTypes();
-static void quarrelEnumTypes();
+static void quarrelEnumTypes(bool drop_types);
 static void quarrelRangeTypes();
-static void quarrelTypes();
+static void quarrelTypes(bool drop_types);
 static void quarrelUserMappings();
 static void quarrelViews();
 
@@ -299,6 +299,9 @@ help(void)
 		   (opts.general.type) ? "true" : "false");
 	printf("      --view=BOOL               view (default: %s)\n",
 		   (opts.general.view) ? "true" : "false");
+	printf("      --drop_types=BOOL               drop_types (default: %s)\n",
+		   (opts.general.drop_types) ? "true" : "false");
+	
 	printf("\nFilter options:\n");
 	printf("      --include-schema=PATTERN  include schemas that match PATTERN (default: all schemas)\n");
 	printf("      --exclude-schema=PATTERN  exclude schemas that match PATTERN (default: none)\n");
@@ -370,6 +373,7 @@ loadConfig(const char *cf, QuarrelOptions *options)
 	options->general.trigger = true;			/* general - trigger */
 	options->general.type = true;				/* general - type */
 	options->general.view = true;				/* general - view */
+	options->general.drop_types = true;				/* general - view */
 
 	options->general.include_schema = NULL;		/* general - include schemas that match pattern */
 	options->general.exclude_schema = NULL;		/* general - exclude schemas that match pattern */
@@ -613,6 +617,10 @@ loadConfig(const char *cf, QuarrelOptions *options)
 		if (mini_file_get_value(config, "general", "view") != NULL)
 			options->general.view = parseBoolean("view", mini_file_get_value(config,
 												 "general", "view"));
+		
+		if (mini_file_get_value(config, "general", "drop_types") != NULL)
+			options->general.drop_types = parseBoolean("drop_types", mini_file_get_value(config,
+												 "general", "drop_types"));		
 
 		/* filter options */
 		tmp = mini_file_get_value(config, "general", "include-schema");
@@ -4098,7 +4106,7 @@ quarrelCompositeTypes()
 }
 
 static void
-quarrelEnumTypes()
+quarrelEnumTypes(bool drop_types)
 {
 	PQLEnumType	*types1 = NULL;	/* target */
 	PQLEnumType	*types2 = NULL;	/* source */
@@ -4148,7 +4156,9 @@ quarrelEnumTypes()
 					 types1[i].obj.objectname);
 
 
-			dumpDropEnumType(fpost, &types1[i]);
+			    if (drop_types) {
+					    dumpDropEnumType(fpost, &types1[i]);
+			    }
 
 			i++;
 			qstat.typeremoved++;
@@ -4177,7 +4187,9 @@ quarrelEnumTypes()
 			logDebug("type %s.%s: server1", types1[i].obj.schemaname,
 					 types1[i].obj.objectname);
 
-			dumpDropEnumType(fpost, &types1[i]);
+            if (drop_types) {
+                dumpDropEnumType(fpost, &types1[i]);
+            }
 
 			i++;
 			qstat.typeremoved++;
@@ -4308,11 +4320,11 @@ quarrelRangeTypes()
 }
 
 static void
-quarrelTypes()
+quarrelTypes(bool drop_types)
 {
 	quarrelBaseTypes();
 	quarrelCompositeTypes();
-	quarrelEnumTypes();
+	quarrelEnumTypes(drop_types);
 	quarrelRangeTypes();
 }
 
@@ -4688,6 +4700,7 @@ int main(int argc, char *argv[])
 		{"temp-directory", required_argument, NULL, 37},
 		{"include-schema", required_argument, NULL, 45},
 		{"exclude-schema", required_argument, NULL, 46},
+		{"drop_types", required_argument, NULL, 47},
 		{NULL, 0, NULL, 0}
 	};
 
@@ -4939,6 +4952,10 @@ int main(int argc, char *argv[])
 				gopts.exclude_schema = strdup(optarg);
 				exclude_schema_given = true;
 				break;
+          	        case 47:
+			        gopts.drop_types = parseBoolean("drop_types", optarg);
+			        gopts_given.drop_types = true;
+			        break;				
 			default:
 				fprintf(stderr, "Try \"%s --help\" for more information.\n", PGQ_NAME);
 				exit(EXIT_FAILURE);
@@ -5034,6 +5051,8 @@ int main(int argc, char *argv[])
 		options.type = gopts.type;
 	if (gopts_given.view)
 		options.view = gopts.view;
+	if (gopts_given.drop_types)
+		options.drop_types = gopts.drop_types;	
 
 	if (include_schema_given)
 		options.include_schema = gopts.include_schema;
@@ -5206,7 +5225,7 @@ int main(int argc, char *argv[])
 	if (options.domain)
 		quarrelDomains();
 	if (options.type)
-		quarrelTypes();
+		quarrelTypes(options.drop_types);
 	if (options.operator)
 	{
 		quarrelOperators();
