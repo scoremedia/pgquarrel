@@ -94,6 +94,7 @@ typedef struct QuarrelGeneralOptions
 	bool			trigger;
 	bool			type;
 	bool			view;
+	bool			drop_types;
 
 	/* filter options */
 	char			*include_schema;
