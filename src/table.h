@@ -78,7 +78,7 @@ void getTableSecurityLabels(PGconn *c, PQLTable *t);
 
 void dumpDropTable(FILE *output, PQLTable *t);
 void dumpCreateTable(FILE *output, FILE *output2, PQLTable *t);
-void dumpAlterTable(FILE *output, PQLTable *a, PQLTable *b);
+void dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b);
 
 void freeTables(PQLTable *t, int n);
 

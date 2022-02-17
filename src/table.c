@@ -2205,7 +2205,7 @@ dumpDetachPartition(FILE *output, PQLTable *a)
 }
 
 void
-dumpAlterTable(FILE *output, PQLTable *a, PQLTable *b)
+dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 {
 	char	*schema1 = formatObjectIdentifier(a->obj.schemaname);
 	char	*tabname1 = formatObjectIdentifier(a->obj.objectname);
@@ -2351,7 +2351,7 @@ dumpAlterTable(FILE *output, PQLTable *a, PQLTable *b)
 						 kindl, b->obj.schemaname, b->obj.objectname,
 						 b->fk[j].conname);
 
-				dumpAddFK(output, b, j);
+				dumpAddFK(output2, b, j);
 
 				j++;
 			}
@@ -2377,7 +2377,7 @@ dumpAlterTable(FILE *output, PQLTable *a, PQLTable *b)
 							 b->fk[j].conname);
 
 					dumpRemoveFK(output, a, i);
-					dumpAddFK(output, b, j);
+					dumpAddFK(output2, b, j);
 				}
 
 				i++;
@@ -2389,7 +2389,7 @@ dumpAlterTable(FILE *output, PQLTable *a, PQLTable *b)
 						 kindl, a->obj.schemaname, a->obj.objectname,
 						 a->fk[i].conname);
 
-				dumpRemoveFK(output, a, i);
+				dumpRemoveFK(output2, a, i);
 				i++;
 			}
 			else if (strcmp(a->fk[i].conname, b->fk[j].conname) > 0)
@@ -2398,7 +2398,7 @@ dumpAlterTable(FILE *output, PQLTable *a, PQLTable *b)
 						 kindl, b->obj.schemaname, b->obj.objectname,
 						 b->fk[j].conname);
 
-				dumpAddFK(output, b, j);
+				dumpAddFK(output2, b, j);
 
 				j++;
 			}

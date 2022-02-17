@@ -3212,7 +3212,7 @@ quarrelForeignTables()
 				getTableSecurityLabels(conn2, &tables2[j]);
 			}
 
-			dumpAlterTable(fpre, &tables1[i], &tables2[j]);
+			dumpAlterTable(fpre, fpost, &tables1[i], &tables2[j]);
 
 			i++;
 			j++;
@@ -3325,7 +3325,7 @@ quarrelTables()
 				getTableSecurityLabels(conn2, &tables2[j]);
 			}
 
-			dumpAlterTable(fpre, &tables1[i], &tables2[j]);
+			dumpAlterTable(fpre, fpost, &tables1[i], &tables2[j]);
 
 			i++;
 			j++;
