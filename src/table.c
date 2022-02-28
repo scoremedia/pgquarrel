@@ -2264,7 +2264,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 						 a->obj.schemaname,
 						 a->obj.objectname, a->attributes[i].attname, a->attributes[i].atttypname);
 
-				dumpRemoveColumn(output, a, i);
+				dumpRemoveColumn(output2, a, i);
 				i++;
 			}
 			else if (strcmp(a->attributes[i].attname, b->attributes[j].attname) == 0)
@@ -2319,7 +2319,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 						 kindl, a->obj.schemaname, a->obj.objectname,
 						 a->attributes[i].attname, a->attributes[i].atttypname);
 
-				dumpRemoveColumn(output, a, i);
+				dumpRemoveColumn(output2, a, i);
 				i++;
 			}
 			else if (strcmp(a->attributes[i].attname, b->attributes[j].attname) > 0)
