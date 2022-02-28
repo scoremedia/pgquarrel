@@ -1875,7 +1875,7 @@ quarrelIndexes()
 			logDebug("index %s.%s: server1", indexes1[i].obj.schemaname,
 					 indexes1[i].obj.objectname);
 
-			dumpDropIndex(fpost, &indexes1[i]);
+			dumpDropIndex(fpre, &indexes1[i]);
 
 			i++;
 			qstat.indexremoved++;
@@ -1895,7 +1895,7 @@ quarrelIndexes()
 			logDebug("index %s.%s: server1", indexes1[i].obj.schemaname,
 					 indexes1[i].obj.objectname);
 
-			dumpDropIndex(fpost, &indexes1[i]);
+			dumpDropIndex(fpre, &indexes1[i]);
 
 			i++;
 			qstat.indexremoved++;
