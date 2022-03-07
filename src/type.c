@@ -1743,6 +1743,7 @@ bool compareValues(PQLEnumType *a, PQLEnumType *b) {
             if (strcmp(a->values[i].value, b->values[j].value) == 0) {
                 logDebug("Compare true %d %d", i, j);
                 flag = true;
+                j = 0;
                 break;
             }
             logDebug("Comparision %d %d", i, j);
