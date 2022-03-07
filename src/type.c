@@ -1733,6 +1733,30 @@ dumpAlterCompositeType(FILE *output, PQLCompositeType *a, PQLCompositeType *b)
 	free(typname2);
 }
 
+bool compareValues(PQLEnumType *a, PQLEnumType *b) {
+    int i = 0, j = 0;
+    bool flag = false;
+    while (i < a->nvalues)
+    {
+        flag = false;
+        while (j < b->nvalues) {
+            if (strcmp(a->values[i].value, b->values[j].value) == 0) {
+                flag = true;
+                break;
+            }
+            j++;
+        }
+
+        if (flag == false) {
+            return false;
+        }
+
+        i++;
+    }
+    return true;
+}
+
+
 void
 dumpAlterEnumType(FILE *output, PQLEnumType *a, PQLEnumType *b)
 {
@@ -1761,6 +1785,15 @@ dumpAlterEnumType(FILE *output, PQLEnumType *a, PQLEnumType *b)
 		}
 	}
 
+
+
+	bool same_type_values = false;
+    i = j = 0;
+
+    if (a->nvalues == b->nvalues) {
+        same_type_values = compareValues(a, b);
+    }
+
 	i = j = 0;
 	while (i < a->nvalues || j < b->nvalues)
 	{
@@ -1788,7 +1821,9 @@ dumpAlterEnumType(FILE *output, PQLEnumType *a, PQLEnumType *b)
 		}
 		else if (strcmp(a->values[i].value, b->values[j].value) != 0)
 		{
-			dumpAlterTypeValue(output, a, i, b, j);
+		    if (!same_type_values) {
+                dumpAlterTypeValue(output, a, i, b, j);
+		    }
 			i++;
 			j++;
 		}
