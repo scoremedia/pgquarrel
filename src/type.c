@@ -1741,13 +1741,15 @@ bool compareValues(PQLEnumType *a, PQLEnumType *b) {
         flag = false;
         while (j < b->nvalues) {
             if (strcmp(a->values[i].value, b->values[j].value) == 0) {
+                logDebug("Compare true %d %d", i, j);
                 flag = true;
                 break;
             }
+            logDebug("Comparision %d %d", i, j);
             j++;
         }
 
-        if (flag == false) {
+        if (!flag) {
             return false;
         }
 
@@ -1791,7 +1793,11 @@ dumpAlterEnumType(FILE *output, PQLEnumType *a, PQLEnumType *b)
     i = j = 0;
 
     if (a->nvalues == b->nvalues) {
+        logDebug("Number of values is the same %d", a->nvalues);
+
+
         same_type_values = compareValues(a, b);
+        logDebug("Number of values is the same %d", same_type_values);
     }
 
 	i = j = 0;
