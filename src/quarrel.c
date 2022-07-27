@@ -93,7 +93,7 @@
 #include "type.h"
 #include "usermapping.h"
 #include "view.h"
-
+#include <string.h>
 #include "mini-parser.h"
 
 
@@ -1838,6 +1838,8 @@ quarrelIndexes()
 	int			nindexes2 = 0;
 	int			i, j;
 
+    char ignore_drop_schema[] = "history_public";
+
 	indexes1 = getIndexes(conn1, &nindexes1);
 	indexes2 = getIndexes(conn2, &nindexes2);
 
@@ -1874,8 +1876,9 @@ quarrelIndexes()
 		{
 			logDebug("index %s.%s: server1", indexes1[i].obj.schemaname,
 					 indexes1[i].obj.objectname);
-
-			dumpDropIndex(fpre, &indexes1[i]);
+            if (strcmp(indexes1[i].obj.schemaname, ignore_drop_schema) == 1) {
+                dumpDropIndex(fpre, &indexes1[i]);
+            }
 
 			i++;
 			qstat.indexremoved++;
@@ -1895,7 +1898,9 @@ quarrelIndexes()
 			logDebug("index %s.%s: server1", indexes1[i].obj.schemaname,
 					 indexes1[i].obj.objectname);
 
-			dumpDropIndex(fpre, &indexes1[i]);
+            if (strcmp(indexes1[i].obj.schemaname, ignore_drop_schema) == 1) {
+                dumpDropIndex(fpre, &indexes1[i]);
+            }
 
 			i++;
 			qstat.indexremoved++;
@@ -4645,8 +4650,6 @@ printSummary(void)
 			qstat.indexremoved);
 }
 
-int main(int argc, char *argv[])
-{
 	static struct option long_options[] =
 	{
 		{"config", required_argument, NULL, 'c'},
