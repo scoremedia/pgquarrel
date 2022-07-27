@@ -4650,6 +4650,8 @@ printSummary(void)
 			qstat.indexremoved);
 }
 
+int main(int argc, char *argv[])
+{
 	static struct option long_options[] =
 	{
 		{"config", required_argument, NULL, 'c'},
