@@ -1876,12 +1876,12 @@ quarrelIndexes()
 		{
 			logDebug("index %s.%s: server1", indexes1[i].obj.schemaname,
 					 indexes1[i].obj.objectname);
-            if (strcmp(indexes1[i].obj.schemaname, ignore_drop_schema) == 1) {
+            if (strcmp(indexes1[i].obj.schemaname, ignore_drop_schema) > 0) {
                 dumpDropIndex(fpre, &indexes1[i]);
+                qstat.indexremoved++;
             }
 
 			i++;
-			qstat.indexremoved++;
 		}
 		else if (compareRelations(&indexes1[i].obj, &indexes2[j].obj) == 0)
 		{
@@ -1898,12 +1898,13 @@ quarrelIndexes()
 			logDebug("index %s.%s: server1", indexes1[i].obj.schemaname,
 					 indexes1[i].obj.objectname);
 
-            if (strcmp(indexes1[i].obj.schemaname, ignore_drop_schema) == 1) {
+            if (strcmp(indexes1[i].obj.schemaname, ignore_drop_schema) > 0 ) {
                 dumpDropIndex(fpre, &indexes1[i]);
+                qstat.indexremoved++;
             }
 
 			i++;
-			qstat.indexremoved++;
+
 		}
 		else if (compareRelations(&indexes1[i].obj, &indexes2[j].obj) > 0)
 		{
