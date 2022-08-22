@@ -2364,7 +2364,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 				logDebug("%s \"%s\".\"%s\" FK \"%s\" removed", kindl, a->obj.schemaname,
 						 a->obj.objectname, a->fk[i].conname);
 
-				dumpRemoveFK(output, a, i);
+				dumpRemoveFK(output2, a, i);
 				i++;
 			}
 			else if (strcmp(a->fk[i].conname, b->fk[j].conname) == 0)
@@ -2376,7 +2376,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 							 kindl, b->obj.schemaname, b->obj.objectname,
 							 b->fk[j].conname);
 
-					dumpRemoveFK(output, a, i);
+					dumpRemoveFK(output2, a, i);
 					dumpAddFK(output2, b, j);
 				}
 
@@ -2431,7 +2431,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 				logDebug("%s \"%s\".\"%s\" check \"%s\" removed", kindl, a->obj.schemaname,
 						 a->obj.objectname, a->check[i].conname);
 
-				dumpRemoveCheck(output, a, i);
+				dumpRemoveCheck(output2, a, i);
 				i++;
 			}
 			else if (strcmp(a->check[i].conname, b->check[j].conname) == 0)
@@ -2443,7 +2443,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 							 kindl, b->obj.schemaname, b->obj.objectname,
 							 b->check[j].conname);
 
-					dumpRemoveCheck(output, a, i);
+					dumpRemoveCheck(output2, a, i);
 					dumpAddCheck(output, b, j);
 				}
 
@@ -2456,7 +2456,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 						 kindl, a->obj.schemaname, a->obj.objectname,
 						 a->check[i].conname);
 
-				dumpRemoveCheck(output, a, i);
+				dumpRemoveCheck(output2, a, i);
 				i++;
 			}
 			else if (strcmp(a->check[i].conname, b->check[j].conname) > 0)
@@ -2486,7 +2486,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 					 kindl, a->obj.schemaname, a->obj.objectname,
 					 a->pk.conname);
 
-			dumpRemovePK(output, a);
+			dumpRemovePK(output2, a);
 		}
 		else if (a->pk.conname != NULL && b->pk.conname != NULL &&
 				 strcmp(a->pk.condef, b->pk.condef) != 0)
@@ -2495,7 +2495,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 					 kindl, b->obj.schemaname, b->obj.objectname,
 					 b->pk.conname);
 
-			dumpRemovePK(output, a);
+			dumpRemovePK(output2, a);
 			dumpAddPK(output, b);
 		}
 	}
