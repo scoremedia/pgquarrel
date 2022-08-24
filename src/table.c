@@ -2364,7 +2364,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 				logDebug("%s \"%s\".\"%s\" FK \"%s\" removed", kindl, a->obj.schemaname,
 						 a->obj.objectname, a->fk[i].conname);
 
-				dumpRemoveFK(output2, a, i);
+				dumpRemoveFK(output, a, i);
 				i++;
 			}
 			else if (strcmp(a->fk[i].conname, b->fk[j].conname) == 0)
@@ -2376,7 +2376,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 							 kindl, b->obj.schemaname, b->obj.objectname,
 							 b->fk[j].conname);
 
-					dumpRemoveFK(output2, a, i);
+					dumpRemoveFK(output, a, i);
 					dumpAddFK(output2, b, j);
 				}
 
@@ -2389,7 +2389,7 @@ dumpAlterTable(FILE *output, FILE *output2, PQLTable *a, PQLTable *b)
 						 kindl, a->obj.schemaname, a->obj.objectname,
 						 a->fk[i].conname);
 
-				dumpRemoveFK(output2, a, i);
+				dumpRemoveFK(output, a, i);
 				i++;
 			}
 			else if (strcmp(a->fk[i].conname, b->fk[j].conname) > 0)
